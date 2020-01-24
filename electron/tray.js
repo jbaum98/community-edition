@@ -48,7 +48,7 @@ exports.create = function(win, config) {
 			});
 			break;
 		case 'win32':
-			appIcon.on('double-click', function() {
+			appIcon.on('click', function() {
 				win.webContents.executeJavaScript('ipc.send("toggleWin", true);');
 			});
 			break;

@@ -111,7 +111,7 @@ function createWindow () {
 		// Wait for the mainWindow.loadURL(..) and the optional mainWindow.webContents.openDevTools()
 		// to be finished before minimizing
 		mainWindow.webContents.once('did-finish-load', function(e) {
-			mainWindow.minimize();
+			mainWindow.hide();
 		});
 	}
 
@@ -191,6 +191,7 @@ function createWindow () {
 					switch (config.get('window_close_behavior')) {
 						case 'keep_in_tray':
 							mainWindow.hide();
+							mainWindow.setSkipTaskbar(true);
 							break;
 						case 'keep_in_tray_and_taskbar':
 							mainWindow.minimize();
@@ -204,7 +205,7 @@ function createWindow () {
 		}
 	});
 	mainWindow.on('minimize', function(e) {
-		if ( config.get('window_display_behavior') === 'show_trayIcon' ) mainWindow.setSkipTaskbar(true);
+		mainWindow.minimize();
 	});
 	mainWindow.on('restore', function(e) {
 		if ( config.get('window_display_behavior') === 'show_taskbar' ) mainWindow.setSkipTaskbar(false);
