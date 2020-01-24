@@ -240,15 +240,6 @@ module.exports = function(config) {
 					}
 				},
 				{
-					label: locale['menu.help[5]'],
-					visible: process.argv.indexOf('--without-update') === -1,
-					click(item, win) {
-						const webContents = win.webContents;
-						const send = webContents.send.bind(win.webContents);
-						send('autoUpdater:check-update');
-					}
-				},
-				{
 					label: locale['menu.help[6]'],
 					click() {
 						sendAction('showAbout')
@@ -309,15 +300,6 @@ module.exports = function(config) {
 		});
 		helpSubmenu.push({
 			type: 'separator'
-		});
-		helpSubmenu.push({
-			label: `&`+locale['menu.help[5]'],
-			visible: process.argv.indexOf('--without-update') === -1,
-			click(item, win) {
-				const webContents = win.webContents;
-				const send = webContents.send.bind(win.webContents);
-				send('autoUpdater:check-update');
-			}
 		});
 		helpSubmenu.push({
 			label: `&`+locale['menu.help[6]'],

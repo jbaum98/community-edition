@@ -119,10 +119,6 @@ Ext.define('Rambox.Application', {
 			Ext.util.Cookies.set('version', require('electron').remote.app.getVersion());
 			if ( Ext.util.Cookies.get('auth0') === null ) Ext.util.Cookies.set('auth0', false);
 
-			// Check for updates
-			if ( require('electron').remote.process.argv.indexOf('--without-update') === -1 ) Rambox.app.checkUpdate(true);
-
-
 			// Shortcuts
 			const platform = require('electron').remote.process.platform;
 			// Prevents default behaviour of Mousetrap, that prevents shortcuts in textareas
@@ -219,63 +215,5 @@ Ext.define('Rambox.Application', {
 				document.title = 'Rambox';
 			}
 		}
-	}
-
-	,checkUpdate: function(silence) {
-		console.info('Checking for updates...');
-		Ext.Ajax.request({
-			 url: 'https://rambox.pro/api/latestversion.json'
-			,method: 'GET'
-			,success: function(response) {
-				var json = Ext.decode(response.responseText);
-				var appVersion = new Ext.Version(require('electron').remote.app.getVersion());
-				if ( appVersion.isLessThan(json.version) ) {
-					console.info('New version is available', json.version);
-					Ext.cq1('app-main').addDocked({
-						 xtype: 'toolbar'
-						,dock: 'top'
-						,ui: 'newversion'
-						,items: [
-							'->'
-							,{
-								 xtype: 'label'
-								,html: '<b>'+locale['app.update[0]']+'</b> ('+json.version+')' + ( process.platform === 'win32' ? ' is downloading in the background and you will be notified when it is ready to be installed.' : '' )
-							}
-							,{
-								 xtype: 'button'
-								,text: locale['app.update[1]']
-								,href: process.platform === 'darwin' ? 'https://getrambox.herokuapp.com/download/'+process.platform+'_'+process.arch : 'https://github.com/ramboxapp/community-edition/releases/latest'
-								,hidden: process.platform === 'win32'
-							}
-							,{
-								 xtype: 'button'
-								,text: locale['app.update[2]']
-								,ui: 'decline'
-								,tooltip: 'Click here to see more information about the new version.'
-								,href: 'https://github.com/ramboxapp/community-edition/releases/tag/'+json.version
-							}
-							,'->'
-							,{
-								 glyph: 'xf00d@FontAwesome'
-								,baseCls: ''
-								,style: 'cursor:pointer;'
-								,handler: function(btn) { Ext.cq1('app-main').removeDocked(btn.up('toolbar'), true); }
-							}
-						]
-					});
-					ipc.send('autoUpdater:check-for-updates');
-					return;
-				} else if ( !silence ) {
-					Ext.Msg.show({
-						 title: locale['app.update[3]']
-						,message: locale['app.update[4]']
-						,icon: Ext.Msg.INFO
-						,buttons: Ext.Msg.OK
-					});
-				}
-
-				console.info('Your version is the latest. No need to update.');
-			}
-		});
 	}
 });
